@@ -1,3 +1,5 @@
+{-# OPTIONS_GHC -Wno-type-defaults #-}
+
 module Svgone.Processors.MergePaths (P, PluginOptions (..)) where
 
 import Control.Lens
@@ -49,20 +51,39 @@ mergePaths opts = \case
 mergePaths2 :: Opts -> PolygonPath -> PolygonPath -> Maybe PolygonPath
 mergePaths2 Opts{..} us vs =
     fmap optsChoosePath . NE.nonEmpty . catMaybes $
-        merge
+        mergeOne
             <$> #unPolygonPath equivalentCycles us
             <*> #unPolygonPath equivalentCycles vs
   where
     a ~= b = distance a b < optsTolerance
-    merge (PolygonPath (u0 :| us0)) (PolygonPath (v0 :| vs0)) = do
+    mergeOne (PolygonPath (u0 :| us0)) (PolygonPath (v0 :| vs0)) = do
         guard $ u0 ~= v0
         u1 : _us1 <- pure us0
         v1 : vs1 <- pure vs0
-        let here :: V2 Double -> Bool -- we don't care about intersections at the points we're merging
+
+        -- we don't care about intersections at the points we're merging
+        let here :: V2 Double -> Bool
             here w = w ~= u0 || w ~= u1
-        guard $ u1 ~= v1 --TODO should just be checking if the points lie on the same line
+
+        let a = distance u0 u1
+            b = distance u0 v1
+            c = distance u1 v1
+            d = ((a ^ 2) + (b ^ 2) - (c ^ 2)) / (2 * a)
+            r = sqrt $ (b ^ 2) - (d ^ 2) -- distance from v1 to the closest point on (u0,u1)
+
+        -- avoid exceptions in calculating r
+        guard $ a /= 0 -- would mean 'us' contains adjacent duplicates
+        -- d is one side of a triangle of which b is the hypotenuse:
+        -- this can only fail if v1 is right on the line and we get rounding errors
+        guard $ d <= b
+
+        -- v1 is on the line
+        guard $ r < optsTolerance
+
+        -- the shapes have no other intersections
         guard $ all here $ catMaybes $ intersectLines <$> pairAdjacent (us0 ++ [u0]) <*> pairAdjacent (vs0 ++ [v0])
-        Just . PolygonPath $ u0 :| reverse us0 ++ vs1
+
+        pure $ PolygonPath $ u0 :| reverse us0 ++ [v1 | not $ u1 ~= v1] ++ vs1
 
 newtype PolygonPath = PolygonPath {unPolygonPath :: NonEmpty (V2 Double)}
     deriving (Eq, Show, Generic)
