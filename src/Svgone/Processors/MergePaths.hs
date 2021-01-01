@@ -59,7 +59,7 @@ mergePaths2 Opts{..} us vs =
         u1 : _us1 <- pure us0
         v1 : vs1 <- pure vs0
         let here :: V2 Double -> Bool -- we don't care about intersections at the points we're merging
-            here v = v ~= u1 || v ~= v1
+            here w = w ~= u0 || w ~= u1
         guard $ u1 ~= v1 --TODO should just be checking if the points lie on the same line
         guard $ all here $ catMaybes $ intersectLines <$> pairAdjacent (us0 ++ [u0]) <*> pairAdjacent (vs0 ++ [v0])
         Just . PolygonPath $ u0 :| reverse us0 ++ vs1
