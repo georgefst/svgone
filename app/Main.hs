@@ -1,16 +1,15 @@
 module Main (main) where
 
-import Graphics.SvgTree
-import Svgone.Processors.MergePaths
-import System.Environment
+import Graphics.SvgTree (loadSvgFile, saveXmlFile)
+import Svgone.Processors.MergePaths qualified as MergePaths
+import Svgone.Types
+import System.Environment (getArgs)
 
 main :: IO ()
 main =
     getArgs >>= \case
         [inF, outF] ->
             loadSvgFile inF >>= \case
-                Just in' -> do
-                    let out = process in'
-                    saveXmlFile outF out
+                Just in' -> saveXmlFile outF $ plugin @MergePaths.P defaultOpts in'
                 Nothing -> error "couldn't read input"
         _ -> error "bad args"
