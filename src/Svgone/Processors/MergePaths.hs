@@ -10,6 +10,7 @@ import Data.Generics.Labels ()
 import Data.List.NonEmpty (NonEmpty ((:|)))
 import Data.List.NonEmpty qualified as NE
 import Data.Maybe
+import Data.Tuple
 import GHC.Generics
 import Graphics.SvgTree hiding (Text)
 import Linear
@@ -23,10 +24,8 @@ instance Plugin P where
     data PluginOptions P = Opts
         { -- | For floating-point equality.
           optsTolerance :: Double
-        , -- | What to use when a pair can be merged in multiple ways.
-          optsChoosePath :: NonEmpty PolygonPath -> PolygonPath
         }
-    defaultOpts = Opts 1 NE.head
+    defaultOpts = Opts 1
     plugin :: Opts -> Document -> Document
     plugin opts = documentElements %~ map Tree . branches opts . map (^. treeBranch)
     pluginName = "merge-paths"
@@ -36,21 +35,22 @@ branches opts bs = polygons' ++ nonPolygons
   where
     (nonPolygons, polygons) = partitionEithers $ map (\b -> maybeToEither b $ toPolygonPath =<< pathBranch b) bs
     polygons' = do
-        (attrs, paths) <- map snd . NE.toList <<$>> classifyOn fst polygons
-        merged <- mergePaths opts paths
+        (attrs, paths) <- snd <<<$>>> classifyOn fst polygons
+        merged <- mergePaths opts $ NE.toList paths
         pure $ PathNode $ fromPolygonPath merged attrs
 
---TODO check all pairs against each other - not just ones adjacent in the input list
 mergePaths :: Opts -> [PolygonPath] -> [PolygonPath]
 mergePaths opts = \case
-    x : y : zs -> case mergePaths2 opts x y of
-        Just p -> mergePaths opts $ p : zs
-        Nothing -> x : mergePaths opts (y : zs)
-    xs -> xs
+    [] -> []
+    p : ps -> case mapMaybe (traverse (mergePaths2 opts p) . swap) $ select ps of
+        -- p can't be merged with any shape in ps
+        [] -> p : mergePaths opts ps
+        -- p' is p merged with whichever path is missing from ps' - run again
+        (ps', p') : _ -> mergePaths opts $ p' : ps'
 
 mergePaths2 :: Opts -> PolygonPath -> PolygonPath -> Maybe PolygonPath
 mergePaths2 Opts{..} us vs =
-    fmap optsChoosePath . NE.nonEmpty . catMaybes $
+    listToMaybe . catMaybes $
         mergeOne
             <$> #unPolygonPath equivalentCycles us
             <*> #unPolygonPath equivalentCycles vs

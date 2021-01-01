@@ -16,6 +16,10 @@ infixl 5 <<$>>
 (<<$>>) :: (Functor f, Functor g) => (a -> b) -> f (g a) -> f (g b)
 (<<$>>) = fmap . fmap
 
+infixl 5 <<<$>>>
+(<<<$>>>) :: (Functor f, Functor g, Functor h) => (a -> b) -> f (g (h a)) -> f (g (h b))
+(<<<$>>>) = fmap . fmap . fmap
+
 (++|) :: NonEmpty a -> [a] -> NonEmpty a
 (++|) (x :| xs) ys = x :| xs ++ ys
 
@@ -24,6 +28,10 @@ pairAdjacent xs = zip xs $ tail xs
 
 classifyOn :: Ord b => (a -> b) -> [a] -> [(b, NonEmpty a)]
 classifyOn f = Map.toList . Map.fromListWith (<>) . map (f &&& pure)
+
+select :: [a] -> [(a, [a])]
+select [] = []
+select (x : xs) = (x, xs) : ((x :) <<$>> select xs)
 
 {- | Rotate and reflect. Same coordinates in same order.
 
