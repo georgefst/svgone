@@ -8,7 +8,7 @@ import Data.Either
 import Data.Either.Extra
 import Data.Generics.Labels ()
 import Data.List.NonEmpty (NonEmpty ((:|)))
-import Data.List.NonEmpty qualified as NE
+import qualified Data.List.NonEmpty as NE
 import Data.Maybe
 import Data.Tuple
 import GHC.Generics

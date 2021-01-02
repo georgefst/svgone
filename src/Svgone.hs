@@ -3,8 +3,8 @@ module Svgone where
 import Data.Text (Text)
 import Graphics.SvgTree (Document, parseSvgFile, saveXmlFile)
 import Svgone.Plugin
-import Svgone.Plugin.CollapseGroups qualified as CollapseGroups
-import Svgone.Plugin.MergePaths qualified as MergePaths
+import qualified Svgone.Plugin.CollapseGroups as CollapseGroups
+import qualified Svgone.Plugin.MergePaths as MergePaths
 
 data SomePlugin where
     SomePlugin :: Plugin a => PluginOptions a -> SomePlugin

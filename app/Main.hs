@@ -1,6 +1,6 @@
 module Main (main) where
 
-import Data.Text.IO qualified as T
+import qualified Data.Text.IO as T
 import Svgone
 import System.Environment
 

@@ -1,6 +1,15 @@
 cabal-version:       3.0
 name:                svgone
 version:             0.1.0.0
+license:             BSD-3-Clause
+maintainer:          George Thomas <georgefsthomas@gmail.com>
+homepage:            https://github.com/georgefst/svgone
+synopsis:            Optimise SVGs
+category:            graphics, svg
+
+source-repository head
+    type:     git
+    location: git://github.com/georgefst/svgone.git
 
 common common
     build-depends:
@@ -22,7 +31,6 @@ common common
     ghc-options:
         -Wall
         -fdefer-typed-holes
-        -threaded
     default-language: Haskell2010
     default-extensions:
         BlockArguments
@@ -37,7 +45,6 @@ common common
         FunctionalDependencies
         GADTs
         GeneralisedNewtypeDeriving
-        ImportQualifiedPost
         InstanceSigs
         LambdaCase
         MultiParamTypeClasses
@@ -62,6 +69,8 @@ executable svgone
     main-is: Main.hs
     build-depends:
         svgone
+    ghc-options:
+        -threaded
 
 library
     import: common

@@ -4,8 +4,8 @@ module Util where
 
 import Control.Monad
 import Data.List.NonEmpty (NonEmpty ((:|)))
-import Data.List.NonEmpty qualified as NE
-import Data.Map qualified as Map
+import qualified Data.List.NonEmpty as NE
+import qualified Data.Map as Map
 import Data.Tuple.Extra
 import Graphics.SvgTree
 import Linear
