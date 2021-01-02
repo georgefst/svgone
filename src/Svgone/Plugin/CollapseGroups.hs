@@ -1,4 +1,4 @@
-module Svgone.Plugin.CollapseGroups where
+module Svgone.Plugin.CollapseGroups (P, PluginOptions (..)) where
 
 import Control.Lens
 import Control.Monad
