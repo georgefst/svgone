@@ -1,10 +1,10 @@
-module Svgone.Processors.CollapseGroups where
+module Svgone.Plugin.CollapseGroups where
 
 import Control.Lens
 import Control.Monad
 import Data.Maybe
 import Graphics.SvgTree
-import Svgone.Types
+import Svgone.Plugin
 
 data P
 type Opts = PluginOptions P

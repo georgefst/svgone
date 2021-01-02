@@ -1,6 +1,6 @@
 {-# OPTIONS_GHC -Wno-type-defaults #-}
 
-module Svgone.Processors.MergePaths (P, PluginOptions (..)) where
+module Svgone.Plugin.MergePaths (P, PluginOptions (..)) where
 
 import Control.Lens
 import Control.Monad
@@ -14,7 +14,7 @@ import Data.Tuple
 import GHC.Generics
 import Graphics.SvgTree hiding (Text)
 import Linear
-import Svgone.Types
+import Svgone.Plugin
 import Util
 
 data P

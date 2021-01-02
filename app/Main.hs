@@ -1,9 +1,9 @@
 module Main (main) where
 
 import Graphics.SvgTree (loadSvgFile, saveXmlFile)
-import Svgone.Processors.CollapseGroups qualified as CollapseGroups
-import Svgone.Processors.MergePaths qualified as MergePaths
-import Svgone.Types
+import Svgone.Plugin.CollapseGroups qualified as CollapseGroups
+import Svgone.Plugin.MergePaths qualified as MergePaths
+import Svgone.Plugin
 import System.Environment (getArgs)
 
 main :: IO ()

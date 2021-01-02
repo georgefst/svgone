@@ -1,6 +1,6 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
 
-module Svgone.Types where
+module Svgone.Plugin where
 
 import Data.Text (Text)
 import Graphics.SvgTree (Document)

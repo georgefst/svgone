@@ -68,8 +68,8 @@ library
     hs-source-dirs: src
     exposed-modules:
         Svgone
-        Svgone.Types
-        Svgone.Processors.MergePaths
-        Svgone.Processors.CollapseGroups
+        Svgone.Plugin
+        Svgone.Plugin.MergePaths
+        Svgone.Plugin.CollapseGroups
     other-modules:
         Util
