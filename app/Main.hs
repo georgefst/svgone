@@ -1,20 +1,13 @@
 module Main (main) where
 
-import Graphics.SvgTree (loadSvgFile, saveXmlFile)
-import Svgone.Plugin
-import Svgone.Plugin.CollapseGroups qualified as CollapseGroups
-import Svgone.Plugin.MergePaths qualified as MergePaths
-import System.Environment (getArgs)
+import Data.Text.IO qualified as T
+import Svgone
+import System.Environment
 
 main :: IO ()
 main =
     getArgs >>= \case
-        [inF, outF] ->
-            loadSvgFile inF >>= \case
-                Just in' ->
-                    saveXmlFile outF
-                        . plugin @MergePaths.P defaultOpts
-                        . plugin @CollapseGroups.P defaultOpts
-                        $ in'
-                Nothing -> error "couldn't read input"
+        [inF, outF] -> do
+            in' <- T.readFile inF
+            run allPluginsWithDefaults inF in' outF
         _ -> error "bad args"
