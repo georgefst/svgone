@@ -25,6 +25,7 @@ common common
         -threaded
     default-language: Haskell2010
     default-extensions:
+        BlockArguments
         ConstraintKinds
         DeriveFoldable
         DeriveFunctor
