@@ -1,6 +1,7 @@
 module Svgone where
 
 import Data.Text (Text)
+import qualified Data.Text.IO as T
 import Graphics.SvgTree (Document, parseSvgFile, saveXmlFile)
 import Svgone.Plugin
 import qualified Svgone.Plugin.CollapseGroups as CollapseGroups
@@ -9,6 +10,18 @@ import qualified Svgone.Plugin.RemoveAttributes as RemoveAttributes
 
 data SomePlugin where
     SomePlugin :: Plugin a => PluginOptions a -> SomePlugin
+
+runFile ::
+    -- | Operations to perform, left to right.
+    [SomePlugin] ->
+    -- | Input file.
+    FilePath ->
+    -- | Output file
+    FilePath ->
+    IO ()
+runFile ps in' out = do
+    t <- T.readFile in'
+    run ps in' t out
 
 run ::
     -- | Operations to perform, left to right.
