@@ -95,3 +95,15 @@ deriving instance Ord Number
 deriving instance Ord TextAnchor
 deriving instance Ord Texture
 deriving instance Ord Transformation
+
+nearZeroNumber :: Number -> Bool
+nearZeroNumber = \case
+    Num d -> nearZero d
+    Px d -> nearZero d
+    Em d -> nearZero d
+    Percent d -> nearZero d
+    Pc d -> nearZero d
+    Mm d -> nearZero d
+    Cm d -> nearZero d
+    Point d -> nearZero d
+    Inches d -> nearZero d
