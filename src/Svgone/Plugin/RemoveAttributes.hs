@@ -39,7 +39,7 @@ removeInvisibleStroke attrs
   where
     remove =
         attrs
-            & strokeWidth .~ Last (Just $ Num 0)
+            & strokeWidth .~ Last Nothing
             & strokeColor .~ Last Nothing
             & strokeOpacity .~ Nothing
             & strokeLineCap .~ Last Nothing

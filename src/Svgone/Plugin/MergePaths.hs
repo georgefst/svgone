@@ -92,7 +92,7 @@ newtype PolygonPath = PolygonPath {unPolygonPath :: NonEmpty (V2 Double)}
 toPolygonPath :: Path -> Maybe (DrawAttributes, PolygonPath)
 toPolygonPath (Path attrs pcs) = do
     guard $ -- only proceed if there is no visible stroke
-        maybe False nearZeroNumber (getLast $ attrs ^. strokeWidth)
+        maybe True nearZeroNumber (getLast $ attrs ^. strokeWidth)
             || maybe False nearZero (attrs ^. strokeOpacity)
     MoveTo OriginAbsolute [v] : xs <- pure pcs
     (attrs,) . PolygonPath . (v :|) <$> f v xs
