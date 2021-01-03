@@ -5,6 +5,7 @@ import Graphics.SvgTree (Document, parseSvgFile, saveXmlFile)
 import Svgone.Plugin
 import qualified Svgone.Plugin.CollapseGroups as CollapseGroups
 import qualified Svgone.Plugin.MergePaths as MergePaths
+import qualified Svgone.Plugin.RemoveAttributes as RemoveAttributes
 
 data SomePlugin where
     SomePlugin :: Plugin a => PluginOptions a -> SomePlugin
@@ -30,5 +31,6 @@ runDoc = flip foldr id \(SomePlugin opts) -> (. plugin opts)
 allPluginsWithDefaults :: [SomePlugin]
 allPluginsWithDefaults =
     [ SomePlugin $ defaultOpts @CollapseGroups.P
+    , SomePlugin $ defaultOpts @RemoveAttributes.P
     , SomePlugin $ defaultOpts @MergePaths.P
     ]

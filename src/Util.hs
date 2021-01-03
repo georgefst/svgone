@@ -3,6 +3,7 @@
 module Util where
 
 import Control.Monad
+import Data.Bool
 import Data.List.NonEmpty (NonEmpty ((:|)))
 import qualified Data.List.NonEmpty as NE
 import qualified Data.Map as Map
@@ -11,6 +12,9 @@ import Graphics.SvgTree
 import Linear
 
 --TODO upstream to svg-tree, extra, linear etc.
+
+applyWhen :: Bool -> (a -> a) -> a -> a
+applyWhen = flip $ bool id
 
 infixl 5 <<$>>
 (<<$>>) :: (Functor f, Functor g) => (a -> b) -> f (g a) -> f (g b)
