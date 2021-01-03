@@ -1,6 +1,6 @@
 {-# OPTIONS_GHC -Wno-type-defaults #-}
 
-module Svgone.Plugin.MergePaths (P, PluginOptions (..)) where
+module Svgone.Plugin.MergePaths (P, PluginOptions (..), PathStyle (..)) where
 
 import Control.Lens
 import Control.Monad
@@ -21,12 +21,19 @@ import Util
 data P
 type Opts = PluginOptions P
 
+data PathStyle
+    = -- | Just use absolute coordinates.
+      AbsolutePath
+    | -- | Use relative offsets and horizontal/vertical lines where possible.
+      SmartPath
+
 instance Plugin P where
     data PluginOptions P = Opts
         { -- | For floating-point equality.
           optsTolerance :: Double
+        , pathStyle :: PathStyle
         }
-    defaultOpts = Opts 1
+    defaultOpts = Opts 1 SmartPath
     plugin :: Opts -> Document -> Document
     plugin opts = documentElements %~ map Tree . branches opts . map (^. treeBranch)
     pluginName = "merge-paths"
@@ -38,7 +45,7 @@ branches opts bs = polygons' ++ nonPolygons
     polygons' = do
         (attrs, paths) <- snd <<<$>>> classifyOn fst polygons
         merged <- mergePaths opts $ NE.toList paths
-        pure $ PathNode $ fromPolygonPath merged attrs
+        pure $ PathNode $ fromPolygonPath opts merged attrs
 
 mergePaths :: Opts -> [PolygonPath] -> [PolygonPath]
 mergePaths opts = \case
@@ -112,9 +119,15 @@ toPolygonPath (Path attrs pcs) = do
             g v = (v :) <$> f v cs
         [] -> Nothing -- should end with 'EndPath'
 
-fromPolygonPath :: PolygonPath -> DrawAttributes -> Path
-fromPolygonPath (PolygonPath (v0 :| p)) =
-    flip Path $
-        [MoveTo OriginAbsolute [v0]]
-            ++ map (LineTo OriginAbsolute . pure) p
-            ++ [EndPath]
+fromPolygonPath :: Opts -> PolygonPath -> DrawAttributes -> Path
+fromPolygonPath Opts{..} (PolygonPath p@(v0 :| p')) =
+    flip Path . (MoveTo OriginAbsolute [v0] :) $ (++ [EndPath]) case pathStyle of
+        AbsolutePath -> map (LineTo OriginAbsolute . pure) p'
+        SmartPath -> map (uncurry fromTo) . pairAdjacent $ NE.toList p
+  where
+    fromTo a b
+        | abs (d ^. _y) < optsTolerance = HorizontalTo OriginRelative [d ^. _x]
+        | abs (d ^. _x) < optsTolerance = VerticalTo OriginRelative [d ^. _y]
+        | otherwise = LineTo OriginRelative [b - a]
+      where
+        d = b - a
