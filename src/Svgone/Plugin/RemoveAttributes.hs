@@ -12,10 +12,11 @@ type Opts = PluginOptions P
 
 instance Plugin P where
     data PluginOptions P = Opts
-        { -- | Remove all stroke attributes if the stroke isn't visible.
+        { defaultAttributes :: Bool
+        , -- | Remove all stroke attributes if the stroke isn't visible.
           invisiblePathStroke :: Bool
         }
-    defaultOpts = Opts True
+    defaultOpts = Opts True True
     plugin :: Opts -> Document -> Document
     plugin Opts{..} =
         documentElements
@@ -24,12 +25,23 @@ instance Plugin P where
                     . ( \x ->
                             maybe
                                 x
-                                (PathNode . over drawAttributes (applyWhen invisiblePathStroke removeInvisibleStroke))
+                                ( PathNode
+                                    . over
+                                        drawAttributes
+                                        ( applyWhen invisiblePathStroke removeInvisibleStroke
+                                            . applyWhen defaultAttributes removeDefaultAttributes
+                                        )
+                                )
                                 $ pathBranch x
                       )
                     . (^. treeBranch)
                 )
     pluginName = "remove-attributes"
+
+removeDefaultAttributes :: HasDrawAttributes p => p -> p
+removeDefaultAttributes attrs
+    | Just x <- attrs ^. fillOpacity, nearZero $ abs $ x - 1 = attrs & fillOpacity .~ Nothing
+    | otherwise = attrs
 
 removeInvisibleStroke :: DrawAttributes -> DrawAttributes
 removeInvisibleStroke attrs
