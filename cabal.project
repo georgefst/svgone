@@ -1,0 +1,13 @@
+packages: .
+
+-- TODO needs bumping and Hackage release (and higher bound for 9.6?)
+-- also, were `Last` changes released without requisite major bump?
+-- https://github.com/reanimate/reanimate-svg/pull/27
+-- https://github.com/reanimate/reanimate-svg/pull/44
+-- https://github.com/reanimate/reanimate-svg/issues/41
+-- https://github.com/reanimate/reanimate-svg/blob/master/changelog.md
+allow-newer:
+    reanimate-svg:mtl,
+    reanimate-svg:transformers,
+package reanimate-svg
+    ghc-options: -fsimpl-tick-factor=1000

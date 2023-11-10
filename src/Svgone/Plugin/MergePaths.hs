@@ -10,7 +10,6 @@ import Data.Generics.Labels ()
 import Data.List.NonEmpty (NonEmpty ((:|)))
 import qualified Data.List.NonEmpty as NE
 import Data.Maybe
-import Data.Monoid
 import Data.Tuple
 import GHC.Generics
 import Graphics.SvgTree hiding (Text)
@@ -99,7 +98,7 @@ newtype PolygonPath = PolygonPath {unPolygonPath :: NonEmpty (V2 Double)}
 toPolygonPath :: Path -> Maybe (DrawAttributes, PolygonPath)
 toPolygonPath (Path attrs pcs) = do
     guard $ -- only proceed if there is no visible stroke
-        maybe True nearZeroNumber (getLast $ attrs ^. strokeWidth)
+        maybe True nearZeroNumber (attrs ^. strokeWidth)
             || maybe False nearZero (attrs ^. strokeOpacity)
     MoveTo OriginAbsolute [v] : xs <- pure pcs
     (attrs,) . PolygonPath . (v :|) <$> f v xs

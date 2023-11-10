@@ -1,7 +1,6 @@
 module Svgone.Plugin.RemoveAttributes (P, PluginOptions (..)) where
 
 import Control.Lens
-import Data.Monoid
 import Graphics.SvgTree
 import Linear.Epsilon
 import Svgone.Plugin
@@ -45,17 +44,17 @@ removeDefaultAttributes attrs
 
 removeInvisibleStroke :: DrawAttributes -> DrawAttributes
 removeInvisibleStroke attrs
-    | Last (Just x) <- attrs ^. strokeWidth, nearZeroNumber x = remove
+    | Just x <- attrs ^. strokeWidth, nearZeroNumber x = remove
     | Just x <- attrs ^. strokeOpacity, nearZero x = remove
     | otherwise = attrs
   where
     remove =
         attrs
-            & strokeWidth .~ Last Nothing
-            & strokeColor .~ Last Nothing
+            & strokeWidth .~ Nothing
+            & strokeColor .~ Nothing
             & strokeOpacity .~ Nothing
-            & strokeLineCap .~ Last Nothing
-            & strokeLineJoin .~ Last Nothing
-            & strokeMiterLimit .~ Last Nothing
-            & strokeOffset .~ Last Nothing
-            & strokeDashArray .~ Last Nothing
+            & strokeLineCap .~ Nothing
+            & strokeLineJoin .~ Nothing
+            & strokeMiterLimit .~ Nothing
+            & strokeOffset .~ Nothing
+            & strokeDashArray .~ Nothing
