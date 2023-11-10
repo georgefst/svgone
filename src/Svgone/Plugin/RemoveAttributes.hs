@@ -12,7 +12,7 @@ type Opts = PluginOptions P
 instance Plugin P where
     data PluginOptions P = Opts
         { defaultAttributes :: Bool
-        , -- | Remove all stroke attributes if the stroke isn't visible.
+        , -- \| Remove all stroke attributes if the stroke isn't visible.
           invisiblePathStroke :: Bool
         }
     defaultOpts = Opts True True
@@ -37,7 +37,7 @@ instance Plugin P where
                 )
     pluginName = "remove-attributes"
 
-removeDefaultAttributes :: HasDrawAttributes p => p -> p
+removeDefaultAttributes :: (HasDrawAttributes p) => p -> p
 removeDefaultAttributes attrs
     | Just x <- attrs ^. fillOpacity, nearZero $ abs $ x - 1 = attrs & fillOpacity .~ Nothing
     | otherwise = attrs

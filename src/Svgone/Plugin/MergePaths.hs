@@ -28,7 +28,7 @@ data PathStyle
 
 instance Plugin P where
     data PluginOptions P = Opts
-        { -- | For floating-point equality.
+        { -- \| For floating-point equality.
           optsTolerance :: Double
         , pathStyle :: PathStyle
         }

@@ -11,7 +11,7 @@ import Data.Tuple.Extra
 import Graphics.SvgTree
 import Linear
 
---TODO upstream to svg-tree, extra, linear etc.
+-- TODO upstream to svg-tree, extra, linear etc.
 
 applyWhen :: Bool -> (a -> a) -> a -> a
 applyWhen = flip $ bool id
@@ -30,7 +30,7 @@ infixl 5 <<<$>>>
 pairAdjacent :: [a] -> [(a, a)]
 pairAdjacent xs = zip xs $ tail xs
 
-classifyOn :: Ord b => (a -> b) -> [a] -> [(b, NonEmpty a)]
+classifyOn :: (Ord b) => (a -> b) -> [a] -> [(b, NonEmpty a)]
 classifyOn f = Map.toList . Map.fromListWith (<>) . map (f &&& pure)
 
 select :: [a] -> [(a, [a])]

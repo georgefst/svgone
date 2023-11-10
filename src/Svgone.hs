@@ -9,7 +9,7 @@ import qualified Svgone.Plugin.MergePaths as MergePaths
 import qualified Svgone.Plugin.RemoveAttributes as RemoveAttributes
 
 data SomePlugin where
-    SomePlugin :: Plugin a => PluginOptions a -> SomePlugin
+    SomePlugin :: (Plugin a) => PluginOptions a -> SomePlugin
 
 runFile ::
     -- | Operations to perform, left to right.
