@@ -10,6 +10,7 @@ import qualified Data.Map as Map
 import Data.Tuple.Extra
 import Graphics.SvgTree
 import Linear
+import Safe (tailSafe)
 
 -- TODO upstream to svg-tree, extra, linear etc.
 
@@ -28,7 +29,7 @@ infixl 5 <<<$>>>
 (++|) (x :| xs) ys = x :| xs ++ ys
 
 pairAdjacent :: [a] -> [(a, a)]
-pairAdjacent xs = zip xs $ tail xs
+pairAdjacent xs = zip xs $ tailSafe xs
 
 classifyOn :: (Ord b) => (a -> b) -> [a] -> [(b, NonEmpty a)]
 classifyOn f = Map.toList . Map.fromListWith (<>) . map (f &&& pure)
